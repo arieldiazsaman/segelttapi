@@ -5,6 +5,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../database/models/User');
 const Post = require('../database/models/Post');
+const Following = require('../database/models/Following');
 const app = express();
 require('dotenv').config();
 const PORT = process.env.PORT || 5000;
@@ -75,6 +76,65 @@ app.post('/post', async (req, res) => {
     res.status(201).json({ message: 'Post created successfully', postId });
   } catch (error) {
     res.status(500).json({ error: 'An error occurred while creating the post' });
+  }
+});
+
+app.post('/follow', async (req, res) => {
+  const { follower_id, following_id } = req.body;
+
+  try {
+    const followId = await Following.followUser(follower_id, following_id);
+    res.status(201).json({ message: 'Followed successfully', followId });
+  } catch (error) {
+    res.status(500).json({ error: 'An error occurred while following the user' });
+  }
+});
+
+app.delete('/unfollow', async (req, res) => {
+  const { follower_id, following_id } = req.body;
+
+  try {
+    const unfollowed = await Following.unfollowUser(follower_id, following_id);
+    if (unfollowed) {
+      res.status(200).json({ message: 'Unfollowed successfully' });
+    } else {
+      res.status(400).json({ error: 'Unfollow operation failed' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'An error occurred while unfollowing the user' });
+  }
+});
+
+app.get('/following/:userId', async (req, res) => {
+  const userId = req.params.userId;
+
+  try {
+    const following = await Following.getFollowingByUser(userId);
+    res.status(200).json(following);
+  } catch (error) {
+    res.status(500).json({ error: 'An error occurred while fetching the following users' });
+  }
+});
+
+app.get('/followers/:userId', async (req, res) => {
+  const userId = req.params.userId;
+
+  try {
+    const followers = await Following.getFollowersByUser(userId);
+    res.status(200).json(followers);
+  } catch (error) {
+    res.status(500).json({ error: 'An error occurred while fetching the followers' });
+  }
+});
+
+app.get('/posts-from-following-and-followers/:userId', async (req, res) => {
+  const userId = req.params.userId;
+
+  try {
+    const posts = await Following.getPostsFromFollowingAndFollowers(userId);
+    res.status(200).json(posts);
+  } catch (error) {
+    res.status(500).json({ error: 'An error occurred while fetching the posts' });
   }
 });
 

@@ -38,6 +38,8 @@ async function initializeDatabase() {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `;
+    await connection.query(createUserTableQuery);
+    console.log(`Table 'User' created successfully.`);
 
     const createPostTableQuery = `
       CREATE TABLE IF NOT EXISTS Post (
@@ -49,8 +51,19 @@ async function initializeDatabase() {
         FOREIGN KEY (owner_id) REFERENCES User(id) ON DELETE CASCADE
       )
     `;
-    await connection.query(createUserTableQuery);
     await connection.query(createPostTableQuery);
+    console.log(`Table 'Post' created successfully.`);
+    const createFollowingTableQuery = `
+        CREATE TABLE IF NOT EXISTS Following (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        follower_id INT NOT NULL,
+        following_id INT NOT NULL,
+        FOREIGN KEY (follower_id) REFERENCES User(id) ON DELETE CASCADE,
+        FOREIGN KEY (following_id) REFERENCES User(id) ON DELETE CASCADE
+        )
+    `;
+  await connection.query(createFollowingTableQuery);
+  console.log(`Table 'Following' created successfully.`);
   } catch (error) {
     console.error('Error initializing database:', error);
   } finally {
