@@ -64,9 +64,9 @@ const Following = {
     const connection = await getConnection();
     const [rows] = await connection.execute(
       `
-      SELECT Post.* FROM Post
-      JOIN Following ON (Post.owner_id = Following.following_id OR Post.owner_id = Following.follower_id)
-      WHERE Following.follower_id = ? OR Following.following_id = ?
+      SELECT DISTINCT Post.* FROM Post
+      LEFT JOIN Following AS F ON Post.owner_id = F.following_id OR Post.owner_id = F.follower_id
+      WHERE F.follower_id = ? OR F.following_id = ?
       ORDER BY Post.created_at DESC
       `,
       [user_id, user_id]
