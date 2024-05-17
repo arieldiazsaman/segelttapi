@@ -38,7 +38,19 @@ async function initializeDatabase() {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `;
+
+    const createPostTableQuery = `
+      CREATE TABLE IF NOT EXISTS Post (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        owner_id INT NOT NULL,
+        owner_name VARCHAR(255) NOT NULL,
+        text TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (owner_id) REFERENCES User(id) ON DELETE CASCADE
+      )
+    `;
     await connection.query(createUserTableQuery);
+    await connection.query(createPostTableQuery);
   } catch (error) {
     console.error('Error initializing database:', error);
   } finally {

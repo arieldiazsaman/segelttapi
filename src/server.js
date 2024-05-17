@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../database/models/User');
+const Post = require('../database/models/Post');
 const app = express();
 require('dotenv').config();
 const PORT = process.env.PORT || 5000;
@@ -60,7 +61,22 @@ app.post('/logout', async (req, res) => {
   } catch (error) {
     return res.status(500).json({ error: 'An error occurred while logging out' });
   }
-})
+});
+
+app.post('/post', async (req, res) => {
+  const { owner_name, text } = req.body;
+
+  try {
+    const user = await User.findByUsername(owner_name);
+    if(!user){
+      return res.status(400).json({ error: 'Invalid username' });
+    }
+    const postId = await Post.create({ owner_id: user.id, owner_name, text });
+    res.status(201).json({ message: 'Post created successfully', postId });
+  } catch (error) {
+    res.status(500).json({ error: 'An error occurred while creating the post' });
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
