@@ -8,7 +8,7 @@ Este proyecto pretende crear un Mock de twitter en base a diferentes criterios.
 Correr algún server MySQL como el incluido en XAMPP
 
 ```
-git clone https://github.com/arieldiazsaman/segelttapi
+git clone https://github.com/arieldiazsaman/segelttapi.git
 ```
 ```
 cd segelttapi/
