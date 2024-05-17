@@ -20,7 +20,7 @@ npm install
 ## Pasos adicionales
 Clonar el Frontend
 ```
-https://github.com/arieldiazsaman/segeltthome.git
+https://github.com/arieldiazsaman/segeltthome
 ```
 
 ## Correr código
