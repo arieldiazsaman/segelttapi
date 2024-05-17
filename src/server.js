@@ -64,6 +64,20 @@ app.post('/logout', async (req, res) => {
   }
 });
 
+app.get('/user/:username', async (req, res) => {
+  const username = req.params.username;
+
+  try {
+    const user = await User.findByUsername(username);
+    if(!user){
+      return res.status(400).json({ error: 'Username not found' });
+    }
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ error: 'An error occurred while getting posts' });
+  }
+})
+
 app.post('/post', async (req, res) => {
   const { owner_name, text } = req.body;
 
@@ -80,6 +94,17 @@ app.post('/post', async (req, res) => {
   }
 });
 
+app.get('/posts/:userId', async (req, res) => {
+  const userId = req.params.userId;
+
+  try {
+    const posts = await Post.findByUserId(userId)
+    res.status(200).json(posts);
+  } catch (error) {
+    res.status(500).json({ error: 'An error occurred while getting posts' });
+  }
+})
+
 app.post('/follow', async (req, res) => {
   const { follower_id, following_id } = req.body;
 
@@ -91,7 +116,7 @@ app.post('/follow', async (req, res) => {
   }
 });
 
-app.delete('/unfollow', async (req, res) => {
+app.post('/unfollow', async (req, res) => {
   const { follower_id, following_id } = req.body;
 
   try {
