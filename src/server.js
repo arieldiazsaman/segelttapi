@@ -40,12 +40,27 @@ app.post('/login', async (req, res) => {
     }
 
     const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '1h' });
-    await User.update(user.id, { session_token: token })
+    await User.update(user.id, { session_token: token }, null)
     res.json({ message: 'Login successful', token });
   } catch (error) {
     return res.status(500).json({ error: 'An error occurred while logging in' });
   }
 });
+
+app.post('/logout', async (req, res) => {
+  const { username } = req.body;
+  try {
+    const user = await User.findByUsername(username);
+    if(!user){
+      return res.status(400).json({ error: 'Invalid username' });
+    }
+
+    await User.update(user.id, null, { session_token: true });
+    res.json({ message: 'Logout successful' });
+  } catch (error) {
+    return res.status(500).json({ error: 'An error occurred while logging out' });
+  }
+})
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

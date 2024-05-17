@@ -42,31 +42,31 @@ const User = {
     return rows[0];
   },
 
-  async update(userId, fields) {
+  async update(userId, fields, nullableFields) {
     const connection = await getConnection();
     const updates = [];
     const values = [];
 
-    if (fields.name) {
+    if (fields?.name) {
       updates.push('name = ?');
-      values.push(fields.name);
+      values.push(fields?.name);
     }
-    if (fields.username) {
+    if (fields?.username) {
       updates.push('username = ?');
-      values.push(fields.username);
+      values.push(fields?.username);
     }
-    if (fields.email) {
+    if (fields?.email) {
       updates.push('email = ?');
-      values.push(fields.email);
+      values.push(fields?.email);
     }
-    if (fields.password) {
-      const hashedPassword = await bcrypt.hash(fields.password, 10);
+    if (fields?.password) {
+      const hashedPassword = await bcrypt.hash(fields?.password, 10);
       updates.push('password = ?');
       values.push(hashedPassword);
     }
-    if (fields.session_token) {
+    if (fields?.session_token || nullableFields?.session_token) {
         updates.push('session_token = ?');
-        values.push(fields.session_token);
+        values.push(fields?.session_token ? fields?.session_token : null);
     }
 
     if (updates.length > 0) {
