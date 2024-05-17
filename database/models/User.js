@@ -1,5 +1,6 @@
 const mysql = require('mysql2/promise');
 const bcrypt = require('bcryptjs');
+const Following = require('./Following');
 require('dotenv').config();
 
 const {
@@ -28,6 +29,7 @@ const User = {
       'INSERT INTO User (name, username, email, password) VALUES (?, ?, ?, ?)',
       [name, username, email, hashedPassword]
     );
+    await Following.followUser(result.insertId, result.insertId);
     await connection.end();
     return result.insertId;
   },

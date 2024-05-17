@@ -27,7 +27,7 @@ const Post = {
       [owner_id, owner_name, text]
     );
     await connection.end();
-    return result.insertId;
+    return result;
   },
 
   async findByUserId(owner_id) {
@@ -38,6 +38,16 @@ const Post = {
     );
     await connection.end();
     return rows;
+  },
+
+  async findById(id) {
+    const connection = await getConnection();
+    const [rows] = await connection.execute(
+      'SELECT * FROM Post WHERE id = ?',
+      [id]
+    );
+    await connection.end();
+    return rows[0];
   }
 };
 

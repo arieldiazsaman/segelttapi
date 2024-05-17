@@ -43,7 +43,7 @@ app.post('/login', async (req, res) => {
 
     const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '1h' });
     await User.update(user.id, { session_token: token }, null)
-    res.json({ message: 'Login successful', token });
+    res.json({ message: 'Login successful', token, userId: user.id });
   } catch (error) {
     return res.status(500).json({ error: 'An error occurred while logging in' });
   }
@@ -72,8 +72,9 @@ app.post('/post', async (req, res) => {
     if(!user){
       return res.status(400).json({ error: 'Invalid username' });
     }
-    const postId = await Post.create({ owner_id: user.id, owner_name, text });
-    res.status(201).json({ message: 'Post created successfully', postId });
+    const { insertId } = await Post.create({ owner_id: user.id, owner_name, text });
+    const post = await Post.findById(insertId)
+    res.status(201).json({ message: 'Post created successfully', post });
   } catch (error) {
     res.status(500).json({ error: 'An error occurred while creating the post' });
   }
